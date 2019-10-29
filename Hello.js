@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
-import FormGroup from '@material-ui/core/FormGroup';
+import List from '@material-ui/core/List';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Divider from '@material-ui/core/Divider';
@@ -160,7 +160,7 @@ export default function Combocheck({ data, title, id }) {
       />
       {showDiv && 
         <div className={classes.root} ref={node}> 
-          <FormGroup>
+          <List>
             <ListItem>
               <Checkbox
                 key='all'
@@ -220,7 +220,7 @@ export default function Combocheck({ data, title, id }) {
                 Confirmar
               </Button>
             </ButtonGroup>
-          </FormGroup>
+          </List>
         </div>
       }
     </>
@@ -259,7 +259,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
     <>
       {showChild && 
         <div className={classes.child}> 
-          <FormGroup>
+          <List>
             {state.checkbox.map((i) => {
               let hasChild;
               let keyWithChild;
@@ -296,7 +296,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                 }
               </ListItem>
             })}
-          </FormGroup>
+          </List>
         </div>
         }
     </>
