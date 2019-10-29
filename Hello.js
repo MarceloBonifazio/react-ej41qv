@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -62,9 +62,11 @@ export const useStyles = makeStyles(theme => ({
 }));
 
 export default function Combocheck({ data, title, id }) {
+  const node = useRef();
   const classes = useStyles();
-  const [showDiv, setShowDiv] = React.useState(false);
-  const [state, setState] = React.useState({
+  const [showDiv, setShowDiv] = useState(false);
+  const [showChild, setShowChild] = useState(false);
+  const [state, setState] = useState({
     checkbox: data.map((element) => {
       element.checked = false;
       element.name = element.name ? element.name : element.region
@@ -124,9 +126,25 @@ export default function Combocheck({ data, title, id }) {
     });
   }
 
-  const openDiv = () => {
-    setShowDiv(!showDiv);
+  const toggleChild = () => {
+    setShowChild(!showChild);
   }
+
+  const closeDiv = () => {
+    setShowDiv(false);
+  }
+
+  const openDiv = () => {
+    document.addEventListener("mousedown", handleClick);
+    setShowDiv(true);
+  }
+
+  const handleClick = e => {
+    if (node.current && node.current.contains(e.target)) {
+      return;
+    }
+    closeDiv();
+  };
 
   return (
     <>
@@ -146,7 +164,7 @@ export default function Combocheck({ data, title, id }) {
         }}
       />
       {showDiv && 
-        <div className={classes.root}> 
+        <div className={classes.root} ref={node}> 
           <FormGroup>
             <FormControlLabel control={
                 <Checkbox
@@ -182,8 +200,10 @@ export default function Combocheck({ data, title, id }) {
                   {i.name || i.region}
                   {hasChild &&
                     <>
-                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={}/>
+                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={toggleChild}/>
                       <ChildBox
+                        setShowChild={setShowChild}
+                        showChild={showChild}
                         data={i[keyWithChild]}
                         title='teste'
                       />
@@ -212,13 +232,13 @@ export default function Combocheck({ data, title, id }) {
   );
 }
 
-function ChildBox({ data, title }) {
+function ChildBox({ data, title, showChild, setShowChild }) {
   const classes = useStyles();
   const [showDiv, setShowDiv] = React.useState(false);
+  const [showChildInside, setShowChildInside] = useState(false);
   const [state, setState] = React.useState({
     checkbox: data.map((element) => {
       element.checked = false;
-      element.name = element.name ? element.name : element.region
       return element;
     }),
     checkedAll: false
@@ -236,8 +256,7 @@ function ChildBox({ data, title }) {
   const changeState = event => {
 
     const checkbox = state.checkbox.map((checkbox) => (
-      event.target.value !== checkbox.code &&
-      event.target.value !== checkbox.name ? 
+      event.target.value !== checkbox.code ?
         checkbox : 
         { ...checkbox, checked: !checkbox.checked }
     ));
@@ -275,51 +294,55 @@ function ChildBox({ data, title }) {
     });
   }
 
-  const openDiv = () => {
-    setShowDiv(!showDiv);
+  const toggleChild = () => {
+    setShowChildInside(!showChildInside);
   }
 
   return (
-    <> 
-      <div className={classes.child}> 
-        <FormGroup>
-          {state.checkbox.map((i) => {
-            let hasChild;
-            let keyWithChild;
-            Object.keys(i).forEach((key) => {
-              if (Array.isArray(i[key])) {
-                keyWithChild = key;
-                hasChild = i[key].length;
-              }
-            });
-            return <FormControlLabel control={
-              <Checkbox
-                key={i.code || i.name}
-                checked={i.checked}
-                onChange={changeState}
-                value={i.code || i.name}
-                color="primary"
-              />
-            }
-            key={i.code || i.name}
-            label={
-              <>
-                {i.name || i.region}
-                {hasChild &&
-                  <>
-                    <KeyboardArrowRight className={classes.iconArrowRight} />
-                    <ChildBox
-                      data={i[keyWithChild]}
-                      title='teste'
-                    />
-                  </>
+    <>
+      {showChild && 
+        <div className={classes.child}> 
+          <FormGroup>
+            {state.checkbox.map((i) => {
+              let hasChild;
+              let keyWithChild;
+              Object.keys(i).forEach((key) => {
+                if (Array.isArray(i[key])) {
+                  keyWithChild = key;
+                  hasChild = i[key].length;
                 }
-              </>
-            }
-            />
-          })}
-        </FormGroup>
-      </div>
+              });
+              return <FormControlLabel control={
+                <Checkbox
+                  key={i.code || i.name}
+                  checked={i.checked}
+                  onChange={changeState}
+                  value={i.code || i.name}
+                  color="primary"
+                />
+              }
+              key={i.code || i.name}
+              label={
+                <>
+                  {i.name || i.region}
+                  {hasChild &&
+                    <>
+                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={toggleChild}/>
+                      <ChildBox
+                        setShowChild={setShowChildInside}
+                        showChild={showChildInside}
+                        data={i[keyWithChild]}
+                        title='teste'
+                      />
+                    </>
+                  }
+                </>
+              }
+              />
+            })}
+          </FormGroup>
+        </div>
+        }
     </>
   );
 }
