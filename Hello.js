@@ -200,7 +200,10 @@ export default function Combocheck({ data, title, id }) {
                   {i.name || i.region}
                   {hasChild &&
                     <>
-                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={toggleChild}/>
+                      <KeyboardArrowRight
+                        className={classes.iconArrowRight}
+                        onClick={toggleChild}
+                      />
                       <ChildBox
                         setShowChild={setShowChild}
                         showChild={showChild}
@@ -234,9 +237,9 @@ export default function Combocheck({ data, title, id }) {
 
 function ChildBox({ data, title, showChild, setShowChild }) {
   const classes = useStyles();
-  const [showDiv, setShowDiv] = React.useState(false);
+  const [showDiv, setShowDiv] = useState(false);
   const [showChildInside, setShowChildInside] = useState(false);
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     checkbox: data.map((element) => {
       element.checked = false;
       return element;
@@ -244,17 +247,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
     checkedAll: false
   });
 
-  const qtdChecked = state.checkbox.filter((el) => el.checked).length;
-  const textInput = '';
-
-  if (qtdChecked > 1) {
-    textInput = `${qtdChecked} Selecionados`;
-  } else if (qtdChecked === 1) {
-    textInput = `${qtdChecked} Selecionado`;
-  }
-
   const changeState = event => {
-
     const checkbox = state.checkbox.map((checkbox) => (
       event.target.value !== checkbox.code ?
         checkbox : 
@@ -264,33 +257,6 @@ function ChildBox({ data, title, showChild, setShowChild }) {
     setState({ 
       checkbox,
       checkedAll: !checkbox.filter(item => !item.checked).length
-    });
-  }
-
-  const resetState = () => {
-    setState({ 
-      checkbox: state.checkbox.map((checkbox) => {
-        return { ...checkbox, checked: false }
-      })
-    });
-  }
-
-  const saveState = () => {
-    const selected = 
-    state.checkbox
-      .filter((item) => item.checked)
-      .map((item) => item['code']);
-
-    setShowDiv(false);
-  }
-
-  const checkAll = () => {
-    const newCheckedAll = !state.checkedAll;
-    setState({ 
-      checkbox: state.checkbox.map((checkbox) => {
-        return { ...checkbox, checked: newCheckedAll }
-      }),
-      checkedAll: newCheckedAll
     });
   }
 
