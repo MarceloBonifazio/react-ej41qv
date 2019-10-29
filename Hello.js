@@ -21,46 +21,13 @@ import IconButton from '@material-ui/core/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
-export const useStyles = makeStyles(theme => ({
-  input: {
-    width: '70%'
-  },
-  root: {
-    backgroundColor: '#fff',
-    borderBottomRightRadius: 10,
-    borderBottomLeftRadius: 10,
-    border: '1px solid rgba(0, 0, 0, 0.54)',
-    padding: 16,
-    position: 'absolute',
-    top: 150,
-    width: 200,
-    zIndex: 10
-  },
-  child: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    left: '100%',
-    top: 0,
-    width: 200,
-	  border: '1px solid black'
-  },
-  title: {
-    fontSize: 14,
-    margin: '20px 0'
-  },
-  divider: {
-    marginBottom: 8
-  },
-  buttonGroup: {
-    float: 'right'
-  }
-}));
+import { useStyles } from './styles';
 
 export default function Combocheck({ data, title, id }) {
   const node = useRef();
   const classes = useStyles();
   const [showDiv, setShowDiv] = useState(false);
-  const [showChild, setShowChild] = useState(false);
+  const [showChild, setShowChild] = useState({});
   const [state, setState] = useState({
     checkbox: data.map((element) => {
       element.checked = false;
@@ -80,7 +47,6 @@ export default function Combocheck({ data, title, id }) {
   }
 
   const changeState = event => {
-
     const checkbox = state.checkbox.map((checkbox) => (
       event.target.value !== checkbox.code &&
       event.target.value !== checkbox.name ? 
@@ -121,8 +87,12 @@ export default function Combocheck({ data, title, id }) {
     });
   }
 
-  const toggleChild = () => {
-    setShowChild(!showChild);
+  const toggleChild = (code) => {
+    console.log(code, showChild)
+    setShowChild({
+      ...showChild,
+      [code]: !showChild[code]
+    });
   }
 
   const closeDiv = () => {
@@ -194,7 +164,7 @@ export default function Combocheck({ data, title, id }) {
                   <ListItemSecondaryAction>
                     <IconButton
                       aria-label="Delete Todo"
-                      onClick={toggleChild}
+                      onClick={() => toggleChild(i.name || i.region)}
                     >
                       <KeyboardArrowRight
                         className={classes.iconArrowRight}
@@ -202,7 +172,7 @@ export default function Combocheck({ data, title, id }) {
                     </IconButton>
                     <ChildBox
                       setShowChild={setShowChild}
-                      showChild={showChild}
+                      showChild={showChild[i.name || i.region]}
                       data={i[keyWithChild]}
                       title='teste'
                     />
@@ -231,7 +201,9 @@ export default function Combocheck({ data, title, id }) {
 
 function ChildBox({ data, title, showChild, setShowChild }) {
   const classes = useStyles();
-  const [showChildInside, setShowChildInside] = useState(false);
+
+  const [showChildInside, setShowChildInside] = useState({});
+
   const [state, setState] = useState({
     checkbox: data.map((element) => {
       element.checked = false;
@@ -253,8 +225,13 @@ function ChildBox({ data, title, showChild, setShowChild }) {
     });
   }
 
-  const toggleChild = () => {
-    setShowChildInside(!showChildInside);
+
+  const toggleChild = (code) => {
+    console.log(code, showChildInside)
+    setShowChildInside({
+      ...showChildInside,
+      [code]: !showChildInside[code]
+    });
   }
 
   return (
@@ -284,7 +261,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                   <ListItemSecondaryAction>
                     <IconButton
                       aria-label="Delete Todo"
-                      onClick={toggleChild}
+                      onClick={() => toggleChild(i.name || i.region)}
                     >
                       <KeyboardArrowRight
                         className={classes.iconArrowRight}
@@ -292,7 +269,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                     </IconButton>
                     <ChildBox
                       setShowChild={setShowChildInside}
-                      showChild={showChildInside}
+                      showChild={showChildInside[i.name || i.region]}
                       data={i[keyWithChild]}
                       title='teste'
                     />
