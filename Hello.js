@@ -192,18 +192,20 @@ export default function Combocheck({ data, title, id }) {
                 <ListItemText primary={i.name || i.region}/>
                 {hasChild &&
                   <ListItemSecondaryAction>
-                    <IconButton aria-label="Delete Todo">
+                    <IconButton
+                      aria-label="Delete Todo"
+                      onClick={toggleChild}
+                    >
                       <KeyboardArrowRight
                         className={classes.iconArrowRight}
-                        onClick={toggleChild}
-                      />
-                      <ChildBox
-                        setShowChild={setShowChild}
-                        showChild={showChild}
-                        data={i[keyWithChild]}
-                        title='teste'
                       />
                     </IconButton>
+                    <ChildBox
+                      setShowChild={setShowChild}
+                      showChild={showChild}
+                      data={i[keyWithChild]}
+                      title='teste'
+                    />
                   </ListItemSecondaryAction>
                 }
               </ListItem>
@@ -280,18 +282,20 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                 <ListItemText primary={i.name || i.region}/>
                 {hasChild &&
                   <ListItemSecondaryAction>
-                    <IconButton aria-label="Delete Todo">
+                    <IconButton
+                      aria-label="Delete Todo"
+                      onClick={toggleChild}
+                    >
                       <KeyboardArrowRight
                         className={classes.iconArrowRight}
-                        onClick={toggleChild}
-                      />
-                      <ChildBox
-                        setShowChild={setShowChildInside}
-                        showChild={showChildInside}
-                        data={i[keyWithChild]}
-                        title='teste'
                       />
                     </IconButton>
+                    <ChildBox
+                      setShowChild={setShowChildInside}
+                      showChild={showChildInside}
+                      data={i[keyWithChild]}
+                      title='teste'
+                    />
                   </ListItemSecondaryAction>
                 }
               </ListItem>
