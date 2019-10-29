@@ -32,6 +32,14 @@ export const useStyles = makeStyles(theme => ({
     width: 200,
     zIndex: 10
   },
+  child: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    left: '100%',
+    top: 0,
+    width: 200,
+	  border: '1px solid black'
+  },
   title: {
     fontSize: 14,
     margin: '20px 0'
@@ -159,7 +167,6 @@ export default function Combocheck({ data, title, id }) {
                   hasChild = i[key].length;
                 }
               });
-              console.log(keyWithChild, hasChild)
               return <FormControlLabel control={
                 <Checkbox
                   key={i.code || i.name}
@@ -173,12 +180,14 @@ export default function Combocheck({ data, title, id }) {
               label={
                 <>
                   {i.name || i.region}
-                  <KeyboardArrowRight className={classes.iconArrowRight} />
                   {hasChild &&
-                    <Combocheck
-                      data={i[keyWithChild]}
-                      title='teste'
-                    />
+                    <>
+                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={}/>
+                      <ChildBox
+                        data={i[keyWithChild]}
+                        title='teste'
+                      />
+                    </>
                   }
                 </>
               }
@@ -199,6 +208,118 @@ export default function Combocheck({ data, title, id }) {
           </ButtonGroup>
         </div>
       }
+    </>
+  );
+}
+
+function ChildBox({ data, title }) {
+  const classes = useStyles();
+  const [showDiv, setShowDiv] = React.useState(false);
+  const [state, setState] = React.useState({
+    checkbox: data.map((element) => {
+      element.checked = false;
+      element.name = element.name ? element.name : element.region
+      return element;
+    }),
+    checkedAll: false
+  });
+
+  const qtdChecked = state.checkbox.filter((el) => el.checked).length;
+  const textInput = '';
+
+  if (qtdChecked > 1) {
+    textInput = `${qtdChecked} Selecionados`;
+  } else if (qtdChecked === 1) {
+    textInput = `${qtdChecked} Selecionado`;
+  }
+
+  const changeState = event => {
+
+    const checkbox = state.checkbox.map((checkbox) => (
+      event.target.value !== checkbox.code &&
+      event.target.value !== checkbox.name ? 
+        checkbox : 
+        { ...checkbox, checked: !checkbox.checked }
+    ));
+
+    setState({ 
+      checkbox,
+      checkedAll: !checkbox.filter(item => !item.checked).length
+    });
+  }
+
+  const resetState = () => {
+    setState({ 
+      checkbox: state.checkbox.map((checkbox) => {
+        return { ...checkbox, checked: false }
+      })
+    });
+  }
+
+  const saveState = () => {
+    const selected = 
+    state.checkbox
+      .filter((item) => item.checked)
+      .map((item) => item['code']);
+
+    setShowDiv(false);
+  }
+
+  const checkAll = () => {
+    const newCheckedAll = !state.checkedAll;
+    setState({ 
+      checkbox: state.checkbox.map((checkbox) => {
+        return { ...checkbox, checked: newCheckedAll }
+      }),
+      checkedAll: newCheckedAll
+    });
+  }
+
+  const openDiv = () => {
+    setShowDiv(!showDiv);
+  }
+
+  return (
+    <> 
+      <div className={classes.child}> 
+        <FormGroup>
+          {state.checkbox.map((i) => {
+            let hasChild;
+            let keyWithChild;
+            Object.keys(i).forEach((key) => {
+              if (Array.isArray(i[key])) {
+                keyWithChild = key;
+                hasChild = i[key].length;
+              }
+            });
+            return <FormControlLabel control={
+              <Checkbox
+                key={i.code || i.name}
+                checked={i.checked}
+                onChange={changeState}
+                value={i.code || i.name}
+                color="primary"
+              />
+            }
+            key={i.code || i.name}
+            label={
+              <>
+                {i.name || i.region}
+                {hasChild &&
+                  <>
+                    <KeyboardArrowRight className={classes.iconArrowRight} />
+                    <ChildBox
+                      data={i[keyWithChild]}
+                      title='teste'
+                    />
+                  </>
+                }
+              </>
+            }
+            />
+          })}
+        </FormGroup>
+      </div>
     </>
   );
 }
