@@ -16,6 +16,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import ListItem from '@material-ui/core/ListItem';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 export const useStyles = makeStyles(theme => ({
   input: {
@@ -47,17 +51,8 @@ export const useStyles = makeStyles(theme => ({
   divider: {
     marginBottom: 8
   },
-  link: {
-    textTransform: 'none',
-    marginRight: 20
-  },
   buttonGroup: {
     float: 'right'
-  },
-  iconArrowRight: {
-    float: 'right',
-    position: 'absolute',
-	  right: 10
   }
 }));
 
@@ -166,16 +161,16 @@ export default function Combocheck({ data, title, id }) {
       {showDiv && 
         <div className={classes.root} ref={node}> 
           <FormGroup>
-            <FormControlLabel control={
-                <Checkbox
-                  key='all'
-                  checked={state.checkedAll}
-                  onChange={checkAll}
-                  color="primary"
-                />
-            }
-            label='Todos'
-            />
+            <ListItem>
+              <Checkbox
+                key='all'
+                checked={state.checkedAll}
+                onChange={checkAll}
+                color="primary"
+                disableRipple
+              />
+              <ListItemText primary="Todos"/>
+            </ListItem>
             {state.checkbox.map((i) => {
               let hasChild;
               let keyWithChild;
@@ -185,7 +180,8 @@ export default function Combocheck({ data, title, id }) {
                   hasChild = i[key].length;
                 }
               });
-              return <FormControlLabel control={
+
+              return <ListItem>
                 <Checkbox
                   key={i.code || i.name}
                   checked={i.checked}
@@ -193,13 +189,10 @@ export default function Combocheck({ data, title, id }) {
                   value={i.code || i.name}
                   color="primary"
                 />
-              }
-              key={i.code || i.name}
-              label={
-                <>
-                  {i.name || i.region}
-                  {hasChild &&
-                    <>
+                <ListItemText primary={i.name || i.region}/>
+                {hasChild &&
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label="Delete Todo">
                       <KeyboardArrowRight
                         className={classes.iconArrowRight}
                         onClick={toggleChild}
@@ -210,25 +203,24 @@ export default function Combocheck({ data, title, id }) {
                         data={i[keyWithChild]}
                         title='teste'
                       />
-                    </>
-                  }
-                </>
-              }
-              />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                }
+              </ListItem>
             })}
+            <ButtonGroup
+              color="primary"
+              size="small"
+              className={classes.buttonGroup}
+            >
+              <Button variant="text" className={classes.link} onClick={resetState}>
+                Limpar dados
+              </Button>
+              <Button variant="outlined" onClick={saveState}>
+                Confirmar
+              </Button>
+            </ButtonGroup>
           </FormGroup>
-          <ButtonGroup
-            color="primary"
-            size="small"
-            className={classes.buttonGroup}
-          >
-            <Button variant="text" className={classes.link} onClick={resetState}>
-              Limpar dados
-            </Button>
-            <Button variant="outlined" onClick={saveState}>
-              Confirmar
-            </Button>
-          </ButtonGroup>
         </div>
       }
     </>
@@ -237,7 +229,6 @@ export default function Combocheck({ data, title, id }) {
 
 function ChildBox({ data, title, showChild, setShowChild }) {
   const classes = useStyles();
-  const [showDiv, setShowDiv] = useState(false);
   const [showChildInside, setShowChildInside] = useState(false);
   const [state, setState] = useState({
     checkbox: data.map((element) => {
@@ -278,7 +269,7 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                   hasChild = i[key].length;
                 }
               });
-              return <FormControlLabel control={
+              return <ListItem>
                 <Checkbox
                   key={i.code || i.name}
                   checked={i.checked}
@@ -286,25 +277,24 @@ function ChildBox({ data, title, showChild, setShowChild }) {
                   value={i.code || i.name}
                   color="primary"
                 />
-              }
-              key={i.code || i.name}
-              label={
-                <>
-                  {i.name || i.region}
-                  {hasChild &&
-                    <>
-                      <KeyboardArrowRight className={classes.iconArrowRight} onClick={toggleChild}/>
+                <ListItemText primary={i.name || i.region}/>
+                {hasChild &&
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label="Delete Todo">
+                      <KeyboardArrowRight
+                        className={classes.iconArrowRight}
+                        onClick={toggleChild}
+                      />
                       <ChildBox
                         setShowChild={setShowChildInside}
                         showChild={showChildInside}
                         data={i[keyWithChild]}
                         title='teste'
                       />
-                    </>
-                  }
-                </>
-              }
-              />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                }
+              </ListItem>
             })}
           </FormGroup>
         </div>
