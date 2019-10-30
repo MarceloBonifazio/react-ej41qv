@@ -88,7 +88,6 @@ export default function Combocheck({ data, title, id }) {
   }
 
   const toggleChild = (code) => {
-    console.log(code, showChild)
     setShowChild({
       ...showChild,
       [code]: !showChild[code]
@@ -105,6 +104,7 @@ export default function Combocheck({ data, title, id }) {
   }
 
   const handleClick = e => {
+    console.log('teste2');
     if (node.current && node.current.contains(e.target)) {
       return;
     }
@@ -175,6 +175,7 @@ export default function Combocheck({ data, title, id }) {
                       showChild={showChild[i.name || i.region]}
                       data={i[keyWithChild]}
                       title='teste'
+                      id={i.name || i.region}
                     />
                   </ListItemSecondaryAction>
                 }
@@ -199,7 +200,9 @@ export default function Combocheck({ data, title, id }) {
   );
 }
 
-function ChildBox({ data, title, showChild, setShowChild }) {
+function ChildBox({ data, title, showChild, setShowChild, id }) {
+  const node = useRef();
+
   const classes = useStyles();
 
   const [showChildInside, setShowChildInside] = useState({});
@@ -225,19 +228,30 @@ function ChildBox({ data, title, showChild, setShowChild }) {
     });
   }
 
-
   const toggleChild = (code) => {
-    console.log(code, showChildInside)
+    // document.addEventListener('mousedown', handleClick);
     setShowChildInside({
       ...showChildInside,
       [code]: !showChildInside[code]
     });
   }
 
+
+  const handleClick = e => {
+    console.log('teste');
+    if (node.current && node.current.contains(e.target)) {
+      return;
+    }
+    setShowChildInside({
+      ...showChildInside,
+      [code]: false
+    });
+  };
+
   return (
     <>
       {showChild && 
-        <div className={classes.child}> 
+        <div className={classes.child} ref={node}> 
           <List>
             {state.checkbox.map((i) => {
               let hasChild;
